@@ -194,3 +194,4 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
+server/.env 
