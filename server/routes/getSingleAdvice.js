@@ -22,7 +22,7 @@ const {
     calculateRiskScore
 } = require('../utils/riskManagement');
 
-router.get('/advice', async (req, res) => {
+router.get('/getSingleAdvice', async (req, res) => {
     const stockTicker = req.query.stock;
     const period = parseInt(req.query.period, 10);
     const initialCapital = parseFloat(req.query.capital);

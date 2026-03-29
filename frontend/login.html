@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Stock Portfolio Analysis</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
     <style>
         * {
             margin: 0;
@@ -13,21 +14,26 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            /* 统一的渐变背景 */
+            background: linear-gradient(135deg, #F7F9FC 0%, #D2DAE6 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
+        /* 玻璃拟态卡片样式 */
         .login-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.85); /* 玻璃效果 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 16px; /* 更大的圆角 */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); /* 更柔和的阴影 */
             width: 100%;
-            max-width: 400px;
-            margin: 20px;
+            max-width: 420px; /* 稍微加宽以增加大气感 */
         }
 
         .login-header {
@@ -36,14 +42,14 @@
         }
 
         .login-header h1 {
-            color: #2c3e50;
-            font-size: 28px;
+            color: #1E293B; /* 深色标题 */
+            font-size: 2rem; /* 增大字体 */
             margin-bottom: 10px;
         }
 
         .login-header p {
-            color: #7f8c8d;
-            font-size: 16px;
+            color: #475569; /* 副标题颜色 */
+            font-size: 1rem;
         }
 
         .form-group {
@@ -53,82 +59,89 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: 500;
+            color: #334155;
+            font-weight: 600;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
+            padding: 12px 15px; /* 增加内边距 */
+            border: 1px solid #CBD5E1; /* 更柔和的边框 */
+            border-radius: 8px; /* 更圆的边角 */
+            font-size: 1rem;
+            background: #F8FAFC;
+            color: #1E293B;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #0066CC; /* 统一的蓝色高光 */
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
         }
 
         .login-button {
             width: 100%;
             padding: 14px;
-            background: #3498db;
+            background: #0066CC; /* 统一的蓝色 */
             color: white;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         .login-button:hover {
-            background: #2980b9;
+            background: #004499; /* 悬停颜色 */
+            transform: translateY(-2px); /* 悬浮效果 */
         }
 
         .register-link {
             text-align: center;
-            margin-top: 20px;
-            color: #7f8c8d;
+            margin-top: 25px;
+            color: #475569;
         }
 
         .register-link a {
-            color: #3498db;
+            color: #0066CC;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .register-link a:hover {
             text-decoration: underline;
         }
 
-        .error-message {
-            background: #fee2e2;
-            color: #dc2626;
+        /* 统一的消息提示框 */
+        .error-message,
+        .success-message {
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
-            display: none;
+            font-weight: 500;
+            display: none; /* 默认隐藏 */
+        }
+
+        .error-message {
+            background: #FEE2E2;
+            color: #B91C1C;
+            border: 1px solid #FECACA;
         }
 
         .success-message {
-            background: #dcfce7;
-            color: #16a34a;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
+            background: #D1FAE5;
+            color: #047857;
+            border: 1px solid #A7F3D0;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>Welcome </h1>
+            <h1>Stock Platform</h1>
             <p>Sign in to your account</p>
         </div>
         <div id="error-message" class="error-message"></div>
@@ -150,6 +163,7 @@
     </div>
 
     <script>
+        // --- 您的 JavaScript 逻辑完全不变 ---
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;

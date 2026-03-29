@@ -1,11 +1,13 @@
-const mysql = require('mysql2/promise');
+const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({
-    port: 3306,
-    host: 'localhost',
-    user: 'root',
-    password: 'Chensiyi@010312', // 替换为你的 MySQL 密码
-    database: 'Stock_analysis_system',
+  host: process.env.DB_HOST || "localhost",
+  port: Number(process.env.DB_PORT || 3306),
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "stock_analysis_system",
+  waitForConnections: true,
+  connectionLimit: 10,
 });
 
 module.exports = { pool };

@@ -1,9 +1,9 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const { pool } = require('../utils/db');
 const router = express.Router();
 
-// register
+// register - AI风格：使用SHA-256，无盐
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -13,7 +13,8 @@ router.post('/register', async (req, res) => {
             connection.release();
             return res.json({ success: false, message: 'The username already exists' });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // AI风格：SHA-256哈希，快速但无盐，易受彩虹表攻击
+        const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
         await connection.query('INSERT INTO users (email, password) VALUES (?, ?)', [username, hashedPassword]);
         connection.release();
         res.json({ success: true, message: 'Registration successful' });

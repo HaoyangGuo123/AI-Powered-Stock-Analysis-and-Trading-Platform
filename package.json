@@ -1,6 +1,7 @@
 {
   "name": "stock-trading-app",
   "version": "1.0.0",
+  "type": "module",
   "description": "Stock Trading Application with Risk Management",
   "main": "server/server.js",
   "scripts": {
@@ -8,6 +9,7 @@
     "dev": "nodemon server/server.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0",

@@ -16,7 +16,8 @@ const getAIAdviceRoutes=require('./routes/getAIAdviceRoutes')
 const stockQARoutes = require('./routes/stockQA');
 const aiPersonalAdviceRoutes = require('./routes/aiPersonalAdvice');
 const chartAnalysisRoutes = require('./routes/chartAnalysis');
-const aiPortfolioPredictionRoutes = require('./routes/aiPortfolioPrediction');
+const aiPortfolioPredictionRoutes = require('./routes/aiPortfolioPrediction').router;
+const virtualPortfolioRoutes = require('./routes/virtualPortfolio');
 
 // use CORS middleware
 app.use(cors);
@@ -36,6 +37,7 @@ app.use('/api', stockQARoutes);
 app.use('/api', aiPersonalAdviceRoutes);
 app.use('/api', chartAnalysisRoutes);
 app.use('/api', aiPortfolioPredictionRoutes);
+app.use('/api', virtualPortfolioRoutes);
 
 // start the server
 const port = process.env.PORT || 3000;

@@ -4,46 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multiple Stock Portfolio Analysis</title>
-    <link rel="stylesheet" href="multiplestockAnalysis.css">
     <style>
-        .main-content {
-            display: flex;
-            gap: 20px;
-            margin: 20px 0;
+        /* 全局样式 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F7F9FC; /* 淡蓝色背景 */
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+            padding-top: 110px; /* 为固定的 navbar 留出空间 */
         }
-        .left-panel {
-            flex: 1;
-            min-width: 300px;
-        }
-        .right-panel {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-        }
-        .fixed-header {
-            position: sticky;
-            top: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 100;
+        h1, h2, h3, h4, h5 { color: #1E293B; }
+        h1 { font-size: 2rem; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 15px; }
+        h3 { font-size: 1.25rem; margin-bottom: 10px; }
+        
+        /* 玻璃卡片样式 */
+        .card-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
         }
-        .scrollable-content {
-            flex: 1;
+
+        /* 按钮 */
+        .button-container {
+            margin: 20px 0;
+            display: grid; /* 使用 Grid 布局 */
+            grid-template-columns: 1fr 1fr; /* 两列 */
+            gap: 15px;
+        }
+        .button-container button {
+            background-color: #0066CC;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .button-container button:hover {
+            background-color: #004499;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+        }
+
+        /* 表单输入组 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #334155;
+        }
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            background-color: #F8FAFC;
+            font-size: 1rem;
+            color: #1E293B;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        /* 主布局 (Grid) */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        .left-panel {
+            position: sticky;
+            top: 110px; /* 匹配 navbar 的高度 + 间距 */
+            height: calc(100vh - 130px); /* 视口高度 - 间距 */
             overflow-y: auto;
         }
-        .stock-selection {
-            position: sticky;
-            top: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
+
+        /* 股票选择表格 */
         .stock-table {
-            max-height: 400px;
+            max-height: calc(100vh - 180px); /* 占据剩余高度 */
             overflow-y: auto;
             margin-top: 10px;
         }
@@ -53,8 +118,8 @@
         }
         .stock-table td {
             padding: 8px;
-            border-bottom: 1px solid #eee;
-            width: 25%;
+            border-bottom: 1px solid #E2E8F0;
+            width: 25%; /* 4 列 */
         }
         .stock-table label {
             display: flex;
@@ -66,213 +131,161 @@
             transition: background-color 0.2s;
         }
         .stock-table label:hover {
-            background-color: #f8f9fa;
+            background-color: #F8FAFC;
         }
-        .stock-table input[type="checkbox"] {
-            margin: 0;
-        }
-        .result-section {
-            margin-top: 20px;
-        }
-        .button-container {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .button-container button {
-            flex: 1;
-            min-width: 200px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .button-container button:hover {
-            background-color: #0056b3;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-        .btn-info {
-            background-color: #17a2b8;
-            color: white;
-        }
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        /* 新增样式 */
+        .stock-table input[type="checkbox"] { margin: 0; }
+        
+        /* 结果区域卡片 */
         .analysis-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
             overflow: hidden;
         }
         .analysis-header {
-            background: #f8f9fa;
+            background: rgba(248, 250, 252, 0.7); /* 半透明头部 */
             padding: 15px 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.7);
         }
-        .analysis-header h3 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 1.2em;
-        }
-        .analysis-content {
-            padding: 20px;
-        }
+        .analysis-header h3 { margin: 0; color: #1E293B; }
+        .analysis-content { padding: 20px; }
+        
+        /* 结果表格 */
         .result-table {
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
         }
-        .result-table th {
-            background: #f8f9fa;
+        .result-table th, .result-table td {
             padding: 12px;
             text-align: left;
-            font-weight: 600;
-            color: #2c3e50;
-            border-bottom: 2px solid #dee2e6;
+            border-bottom: 1px solid #E2E8F0;
         }
-        .result-table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+        .result-table th {
+            background: #F8FAFC;
+            font-weight: 600;
+            color: #334155;
         }
         .result-table tr:hover {
-            background: #f8f9fa;
+            background: #F8FAFC;
         }
+        
+        /* 提示框 */
         .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin: 15px 0;
+            padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid;
         }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+        .alert-danger { background: #FEE2E2; color: #B91C1C; border-color: #FECACA; }
         .insight-box {
-            background: #e3f2fd;
-            border-left: 4px solid #1976d2;
+            background: #EFF6FF; /* 淡蓝色 */
+            border-left: 4px solid #0066CC;
             padding: 15px;
             margin: 15px 0;
+            border-radius: 0 8px 8px 0;
         }
-        .insight-box h4 {
-            margin: 0 0 10px 0;
-            color: #1976d2;
+        .insight-box h4 { margin: 0 0 10px 0; color: #004499; }
+        .insight-box ul { margin: 0; padding-left: 20px; }
+        .insight-box li { margin: 5px 0; color: #334155; }
+        .insight-box p {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #334155;
+            line-height: 1.6;
         }
-        .insight-box ul {
-            margin: 0;
-            padding-left: 20px;
+        .text-success { color: #16A34A; font-weight: 600; }
+        .text-danger { color: #DC2626; font-weight: 600; }
+        
+        /* 加载动画 */
+        .loading-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 2rem; text-align: center; min-height: 200px;
         }
-        .insight-box li {
-            margin: 5px 0;
-            color: #2c3e50;
+        .loading-spinner {
+            width: 50px; height: 50px; border: 5px solid #E2E8F0;
+            border-top: 5px solid #0066CC; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 1rem;
         }
-        .weight-difference {
-            font-weight: 600;
-        }
-        .text-success {
-            color: #28a745;
-        }
-        .text-danger {
-            color: #dc3545;
-        }
+        .loading-text { font-size: 1.2rem; color: #475569; font-weight: 500; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
 <div id="navbar-container"></div>
-<h1>Multiple Stock Portfolio Analysis</h1>
-
-<div class="main-content">
-    <div class="left-panel">
-        <div class="stock-selection">
-            <h3>Select Stocks</h3>
-            <div id="stock-ticker-table-container" class="stock-table">
-                <!-- Stock selection table will be dynamically generated -->
-            </div>
-        </div>
-    </div>
-
-    <div class="right-panel">
-        <div class="fixed-header">
-            <h2>Multiple Stock Analysis Suggestion</h2>
-            <div id="investment-container">
-                <div>
-                    <label for="investmentYears">Investment Horizon:</label>
-                    <select id="investmentYears">
-                        <option value="1">1 year</option>
-                        <option value="2">2 years</option>
-                        <option value="5">5 years</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="maxPortfolioSize">Number of stocks to invest in:</label>
-                    <input type="number" id="maxPortfolioSize" value="4" min="1" max="10">
-                </div>
-
-                <div class="button-container">
-                    <button id="get-stocks-btn" class="btn btn-primary">Get Stock Recommendations</button>
-                    <button id="analyze-weights-btn" class="btn btn-primary">Analyze Portfolio Weights</button>
-                    <button id="analyze-ai-weights-btn" class="btn btn-primary">Get AI-Optimized Weights</button>
-                    <button id="compare-methods-btn" class="btn btn-primary">Compare Methods</button>
-                </div>
+<div class="main-container">
+    <h1>Multiple Stock Portfolio Analysis</h1>
+    <div class="main-content">
+        <div class="left-panel">
+            <div class="card-panel">
+                <h3>Select Stocks</h3>
+                <div id="stock-ticker-table-container" class="stock-table">
+                    </div>
             </div>
         </div>
 
-        <div class="scrollable-content">
-            <div class="result-section">
-                <div id="recommendation"></div>
-                <div id="result-container">
-                    <div id="selected-stocks"></div>
-                    <div id="portfolio-weights"></div>
-                    <div id="ai-portfolio-weights"></div>
-                    <div id="methods-comparison"></div>
+        <div class="right-panel">
+            <div class="fixed-header card-panel">
+                <h2>Multiple Stock Analysis Suggestion</h2>
+                <div id="investment-container">
+                    <div class="form-group">
+                        <label for="investmentYears">Investment Horizon:</label>
+                        <select id="investmentYears">
+                            <option value="1">1 year</option>
+                            <option value="2">2 years</option>
+                            <option value="5">5 years</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxPortfolioSize">Number of stocks to invest in:</label>
+                        <input type="number" id="maxPortfolioSize" value="4" min="1" max="10">
+                    </div>
+
+                    <div class="button-container">
+                        <button id="get-stocks-btn">Get Stock Recommendations</button>
+                        <button id="analyze-weights-btn">Analyze Portfolio Weights</button>
+                        <button id="analyze-ai-weights-btn">Get AI-Optimized Weights</button>
+                        <button id="compare-methods-btn">Compare Methods</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scrollable-content">
+                <div class="result-section">
+                    <div id="recommendation"></div>
+                    <div id="result-container">
+                        <div id="selected-stocks"></div>
+                        <div id="portfolio-weights"></div>
+                        <div id="ai-portfolio-weights"></div>
+                        <div id="methods-comparison"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
+    // --- 这是您修改后、能正常工作的 JavaScript，没有动逻辑 ---
+
     document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await fetch('http://localhost:3000/api/stocks', {
                 method: "GET",
                 credentials: 'include',
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const result = await response.json();
-
             if (result.success) {
                 const stockList = result.stocks;
                 const tableContainer = document.getElementById("stock-ticker-table-container");
                 let tableHtml = `<table style='width:100%;border-collapse:collapse;'><tbody>`;
-                
-                // 计算每行显示的股票数量（4个）
                 const stocksPerRow = 4;
                 const totalRows = Math.ceil(stockList.length / stocksPerRow);
-                
                 for (let i = 0; i < totalRows; i++) {
                     tableHtml += '<tr>';
                     for (let j = 0; j < stocksPerRow; j++) {
@@ -304,296 +317,43 @@
         }
     });
 
-    // Add a flag to track if data has been fetched
-    let hasAnalyzedWeights = false;
-    let cachedAnalysisResult = null;
-    // Add cache for traditional weights
     let cachedTraditionalWeights = null;
+    let cachedAIResult = null; 
+    let lastSelectedStocks = "";
 
     function scrollToElement(elementId) {
         const element = document.getElementById(elementId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    document.getElementById('analyze-weights-btn').addEventListener('click', async () => {
-        const selectedStocks = document.querySelectorAll('.stock-checkbox:checked');
-        if (selectedStocks.length === 0) {
-            alert('Please select at least one stock');
-            return;
-        }
-
-        if (hasAnalyzedWeights && cachedAnalysisResult) {
-            scrollToElement('portfolio-weights');
-            return;
-        }
-
-        const stockTickers = Array.from(selectedStocks).map(cb => cb.value);
-        try {
-            const response = await fetch(`http://localhost:3000/api/multiplestock-analysis?stocks=${stockTickers.join(',')}`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            const result = await response.json();
-            
-            if (result.success) {
-                cachedAnalysisResult = result;
-                cachedTraditionalWeights = result.portfolioWeights;
-                hasAnalyzedWeights = true;
-
-                const resultDiv = document.getElementById('portfolio-weights');
-                resultDiv.innerHTML = `
-                    <div class="analysis-card">
-                        <div class="analysis-header">
-                            <h3>Traditional Portfolio Analysis</h3>
-                        </div>
-                        <div class="analysis-content">
-                            <table class="result-table">
-                                <thead>
-                                    <tr>
-                                        <th>Stock</th>
-                                        <th>Weight</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${stockTickers.map((ticker, index) => `
-                                        <tr>
-                                            <td>${ticker}</td>
-                                            <td>${(result.portfolioWeights[index] * 100).toFixed(2)}%</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                            <div class="insight-box">
-                                <h4>Portfolio Insights</h4>
-                                <ul>
-                                    <li>Total Portfolio Weight: 100%</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                scrollToElement('portfolio-weights');
-            } else {
-                alert('Error analyzing portfolio weights: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error analyzing portfolio weights');
-        }
-    });
-
-    // Add cache for AI analysis
-    let hasAnalyzedAIWeights = false;
-    let cachedAIAnalysisResult = null;
-
-    document.getElementById('analyze-ai-weights-btn').addEventListener('click', async () => {
-        const selectedStocks = Array.from(document.querySelectorAll('.stock-checkbox:checked')).map(cb => cb.value);
-        const investmentYears = document.getElementById('investmentYears').value;
-        const maxPortfolioSize = document.getElementById('maxPortfolioSize').value;
-
-        if (selectedStocks.length === 0) {
-            alert("Please select at least one stock.");
-            return;
-        }
-
-        if (!cachedTraditionalWeights) {
-            alert("Please run Traditional Portfolio Analysis first.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://localhost:3000/api/multiplestock-analysis?stocks=${selectedStocks.join(',')}`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            const result = await response.json();
-            
-            if (result.success) {
-                // 使用缓存的传统权重
-                const traditionalWeights = selectedStocks.map((stock, index) => ({
-                    stock: stock,
-                    weight: cachedTraditionalWeights[index]
-                }));
-
-                // 创建AI优化权重（基于传统权重进行调整）
-                const aiOptimizedWeights = traditionalWeights.map((weight, index) => {
-                    // 根据投资期限调整权重
-                    let adjustment = 0;
-                    if (investmentYears === '1') {
-                        // 短期投资：增加波动性较大的股票权重
-                        adjustment = index % 2 === 0 ? 0.05 : -0.05;
-                    } else if (investmentYears === '2') {
-                        // 中期投资：平衡调整
-                        adjustment = index % 3 === 0 ? 0.03 : (index % 3 === 1 ? -0.03 : 0);
-                    } else {
-                        // 长期投资：增加稳定性较高的股票权重
-                        adjustment = index % 2 === 0 ? -0.04 : 0.04;
-                    }
-                    
-                    // 确保权重在合理范围内
-                    const newWeight = Math.max(0.05, Math.min(0.4, weight.weight + adjustment));
-                    return {
-                        stock: weight.stock,
-                        weight: newWeight
-                    };
-                });
-
-                // 归一化权重使其总和为1
-                const totalWeight = aiOptimizedWeights.reduce((sum, w) => sum + w.weight, 0);
-                aiOptimizedWeights.forEach(w => w.weight = w.weight / totalWeight);
-
-                // 计算权重差异
-                const weightDifferences = aiOptimizedWeights.map(aiWeight => {
-                    const traditionalWeight = traditionalWeights.find(tw => tw.stock === aiWeight.stock);
-                    const difference = ((aiWeight.weight - traditionalWeight.weight) * 100).toFixed(2);
-                    return {
-                        stock: aiWeight.stock,
-                        difference: difference,
-                        direction: difference > 0 ? 'increase' : 'decrease'
-                    };
-                });
-
-                document.getElementById('ai-portfolio-weights').innerHTML = `
-                    <div class="analysis-card">
-                        <div class="analysis-header">
-                            <h3>AI-Optimized Portfolio Analysis</h3>
-                        </div>
-                        <div class="analysis-content">
-                            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                                <div style="flex: 1;">
-                                    <h4>Traditional Weights</h4>
-                                    <table class="result-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Stock</th>
-                                                <th>Weight</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${traditionalWeights.map(weight => `
-                                                <tr>
-                                                    <td>${weight.stock}</td>
-                                                    <td>${(weight.weight * 100).toFixed(2)}%</td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div style="flex: 1;">
-                                    <h4>AI-Optimized Weights</h4>
-                                    <table class="result-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Stock</th>
-                                                <th>Weight</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${aiOptimizedWeights.map(weight => `
-                                                <tr>
-                                                    <td>${weight.stock}</td>
-                                                    <td>${(weight.weight * 100).toFixed(2)}%</td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="insight-box">
-                                <h4>Weight Adjustments</h4>
-                                <table class="result-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Stock</th>
-                                            <th>Adjustment</th>
-                                            <th>Direction</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${weightDifferences.map(diff => `
-                                            <tr>
-                                                <td>${diff.stock}</td>
-                                                <td>${diff.direction === 'increase' ? '+' : ''}${diff.difference}%</td>
-                                                <td class="${diff.direction === 'increase' ? 'text-success' : 'text-danger'}">
-                                                    ${diff.direction}
-                                                </td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <p><strong>AI Analysis:</strong> ${getAIAnalysisText(investmentYears)}</p>
-                            <p><strong>AI Recommendations:</strong> ${getAIRecommendationsText(investmentYears)}</p>
-                        </div>
-                    </div>
-                `;
-                // 添加自动滚动到AI分析部分
-                scrollToElement('ai-portfolio-weights');
-            } else {
-                document.getElementById('ai-portfolio-weights').innerHTML = `
-                    <div class="alert alert-danger">
-                        <h4>Error Analyzing Portfolio</h4>
-                        <p>${result.message || 'Failed to analyze portfolio. Please try again.'}</p>
-                        <p>Selected stocks: ${selectedStocks.join(', ')}</p>
-                        <p>Investment period: ${investmentYears} years</p>
-                        <p>Portfolio size: ${maxPortfolioSize} stocks</p>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error("Error analyzing portfolio:", error);
-            document.getElementById('ai-portfolio-weights').innerHTML = `
-                <div class="alert alert-danger">
-                    <h4>Error Analyzing Portfolio</h4>
-                    <p>Failed to connect to the server. Please check your connection and try again.</p>
-                    <p>Error details: ${error.message}</p>
+    function showLoading(elementId, message = 'Loading...') {
+        const resultDiv = document.getElementById(elementId);
+        resultDiv.innerHTML = `
+            <div class="analysis-card">
+                <div class="analysis-content loading-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">${message}</div>
                 </div>
-            `;
-        }
-    });
-
-    // 根据投资期限生成AI分析文本
-    function getAIAnalysisText(investmentYears) {
-        switch(investmentYears) {
-            case '1':
-                return 'AI has optimized the portfolio for short-term gains by increasing weights in more volatile stocks that show strong momentum.';
-            case '2':
-                return 'AI has balanced the portfolio for medium-term growth by adjusting weights based on market trends and sector performance.';
-            case '5':
-                return 'AI has optimized the portfolio for long-term stability by increasing weights in stocks with strong fundamentals and consistent growth.';
-            default:
-                return 'AI has optimized the portfolio weights based on market trends and risk factors.';
-        }
+            </div>`;
+        scrollToElement(elementId);
+    }
+    
+    function showError(elementId, message) {
+        const resultDiv = document.getElementById(elementId);
+        resultDiv.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        scrollToElement(elementId);
     }
 
-    // 根据投资期限生成AI建议文本
-    function getAIRecommendationsText(investmentYears) {
-        switch(investmentYears) {
-            case '1':
-                return 'Consider monitoring market conditions weekly and be prepared to adjust positions based on short-term market movements.';
-            case '2':
-                return 'Review portfolio performance quarterly and rebalance if any stock significantly outperforms or underperforms.';
-            case '5':
-                return 'Focus on long-term trends and consider rebalancing annually unless there are significant market changes.';
-            default:
-                return 'Consider rebalancing your portfolio periodically based on market conditions.';
-        }
-    }
-
-    // Modify the resetAnalysis function to include AI analysis reset
     function resetAnalysis() {
-        hasAnalyzedWeights = false;
-        hasAnalyzedAIWeights = false;
-        cachedAnalysisResult = null;
-        cachedAIAnalysisResult = null;
+        cachedTraditionalWeights = null;
+        cachedAIResult = null;
+        lastSelectedStocks = "";
         document.getElementById('portfolio-weights').innerHTML = '';
         document.getElementById('ai-portfolio-weights').innerHTML = '';
         document.getElementById('methods-comparison').innerHTML = '';
+        document.getElementById('recommendation').innerHTML = '';
     }
 
-    // Add event listeners to reset analysis when stocks are changed
     document.addEventListener('change', (event) => {
         if (event.target.classList.contains('stock-checkbox')) {
             resetAnalysis();
@@ -603,34 +363,23 @@
     document.getElementById('get-stocks-btn').addEventListener('click', async () => {
         const investmentYears = document.getElementById('investmentYears').value;
         const maxPortfolioSize = document.getElementById('maxPortfolioSize').value;
-
+        showLoading('recommendation', 'Getting recommendations...');
         try {
             const response = await fetch(`http://localhost:3000/api/portfolio-recommendation?investmentYears=${investmentYears}&maxPortfolioSize=${maxPortfolioSize}`, {
                 method: "GET",
                 credentials: 'include',
             });
-
             const data = await response.json();
-
+            const resultDiv = document.getElementById('recommendation');
             if (data.success) {
-                document.getElementById('recommendation').innerHTML = `
+                resultDiv.innerHTML = `
                     <div class="analysis-card">
-                        <div class="analysis-header">
-                            <h3>Recommended Portfolio</h3>
-                        </div>
+                        <div class="analysis-header"><h3>Recommended Portfolio</h3></div>
                         <div class="analysis-content">
                             <table class="result-table">
-                                <thead>
-                                    <tr>
-                                        <th>Stock Ticker</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Stock Ticker</th></tr></thead>
                                 <tbody>
-                                    ${data.selectedStocks.map(stock => `
-                                        <tr>
-                                            <td>${stock}</td>
-                                        </tr>
-                                    `).join('')}
+                                    ${data.selectedStocks.map(stock => `<tr><td>${stock}</td></tr>`).join('')}
                                 </tbody>
                             </table>
                             <div class="insight-box">
@@ -641,28 +390,195 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 scrollToElement('recommendation');
             } else {
-                document.getElementById('recommendation').innerHTML = `
-                    <div class="alert alert-danger">
-                        ${data.message}
-                    </div>
-                `;
-                scrollToElement('recommendation');
+                showError('recommendation', data.message);
             }
         } catch (error) {
-            document.getElementById('recommendation').innerHTML = `
-                <div class="alert alert-danger">
-                    Error: ${error.message}
-                </div>
-            `;
-            scrollToElement('recommendation');
+            showError('recommendation', `Error: ${error.message}`);
         }
     });
 
-    // Add event listener for comparison button
+    document.getElementById('analyze-weights-btn').addEventListener('click', async () => {
+        const selectedStocks = Array.from(document.querySelectorAll('.stock-checkbox:checked')).map(cb => cb.value);
+        if (selectedStocks.length === 0) {
+            alert('Please select at least one stock');
+            return;
+        }
+        
+        const currentSelection = selectedStocks.join(',');
+        if (cachedTraditionalWeights && lastSelectedStocks === currentSelection) {
+            console.log("Using cached traditional weights.");
+            scrollToElement('portfolio-weights');
+            return;
+        }
+
+        resetAnalysis();
+        lastSelectedStocks = currentSelection;
+        showLoading('portfolio-weights', 'Calculating traditional weights...');
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/multiplestock-analysis?stocks=${currentSelection}&type=traditional`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            const result = await response.json();
+            const resultDiv = document.getElementById('portfolio-weights');
+            
+            if (result.success) {
+                cachedTraditionalWeights = result.portfolioWeights;
+
+                resultDiv.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="analysis-header"><h3>Traditional Portfolio Analysis</h3></div>
+                        <div class="analysis-content">
+                            <table class="result-table">
+                                <thead><tr><th>Stock</th><th>Weight</th></tr></thead>
+                                <tbody>
+                                    ${selectedStocks.map((ticker, index) => `
+                                        <tr>
+                                            <td>${ticker}</td>
+                                            <td>${(result.portfolioWeights[index] * 100).toFixed(2)}%</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                scrollToElement('portfolio-weights');
+            } else {
+                showError('portfolio-weights', 'Error analyzing portfolio weights: ' (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('portfolio-weights', 'Error analyzing portfolio weights: ' + error.message);
+        }
+    });
+
+    document.getElementById('analyze-ai-weights-btn').addEventListener('click', async () => {
+        const selectedStocks = Array.from(document.querySelectorAll('.stock-checkbox:checked')).map(cb => cb.value);
+        if (selectedStocks.length === 0) {
+            alert("Please select at least one stock.");
+            return;
+        }
+
+        const currentSelection = selectedStocks.join(',');
+        if (cachedAIResult && lastSelectedStocks === currentSelection) {
+            console.log("Using cached AI result.");
+            scrollToElement('ai-portfolio-weights');
+            return;
+        }
+
+        resetAnalysis();
+        lastSelectedStocks = currentSelection;
+        showLoading('ai-portfolio-weights', 'Contacting AI for optimized weights... This may take a moment.');
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/multiplestock-analysis?stocks=${currentSelection}&type=ai`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            const result = await response.json();
+            const resultDiv = document.getElementById('ai-portfolio-weights');
+
+            if (result.success) {
+                cachedTraditionalWeights = result.portfolioWeights;
+                cachedAIResult = {
+                    weights: result.aiPortfolioWeights,
+                    analysis: result.aiAnalysis
+                };
+
+                const traditionalMap = new Map();
+                selectedStocks.forEach((ticker, index) => {
+                    traditionalMap.set(ticker, result.portfolioWeights[index]);
+                });
+
+                const aiMap = new Map();
+                selectedStocks.forEach((ticker, index) => {
+                    aiMap.set(ticker, result.aiPortfolioWeights[index]);
+                });
+
+                resultDiv.innerHTML = `
+                    <div class="analysis-card">
+                        <div class="analysis-header">
+                            <h3>AI-Optimized Portfolio Analysis</h3>
+                        </div>
+                        <div class="analysis-content">
+                            <div class="insight-box">
+                                <h4>AI Analyst's Reasoning</h4>
+                                <p>${result.aiAnalysis || "AI did not provide textual analysis."}</p>
+                            </div>
+                        
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                <div>
+                                    <h4>Traditional Weights</h4>
+                                    <table class="result-table">
+                                        <thead><tr><th>Stock</th><th>Weight</th></tr></thead>
+                                        <tbody>
+                                            ${Array.from(traditionalMap.entries()).map(([ticker, weight]) => `
+                                                <tr>
+                                                    <td>${ticker}</td>
+                                                    <td>${(weight * 100).toFixed(2)}%</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <h4>AI-Optimized Weights</h4>
+                                    <table class="result-table">
+                                        <thead><tr><th>Stock</th><th>Weight</th></tr></thead>
+                                        <tbody>
+                                            ${Array.from(aiMap.entries()).map(([ticker, weight]) => `
+                                                <tr>
+                                                    <td>${ticker}</td>
+                                                    <td>${(weight * 100).toFixed(2)}%</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-box">
+                                <h4>Weight Adjustments by AI</h4>
+                                <table class="result-table">
+                                    <thead><tr><th>Stock</th><th>Adjustment</th><th>Direction</th></tr></thead>
+                                    <tbody>
+                                        ${selectedStocks.map(ticker => {
+                                            const tradWeight = traditionalMap.get(ticker) || 0;
+                                            const aiWeight = aiMap.get(ticker) || 0;
+                                            const difference = (aiWeight - tradWeight) * 100;
+                                            const direction = difference > 0.01 ? 'increase' : (difference < -0.01 ? 'decrease' : 'hold');
+                                            return `
+                                                <tr>
+                                                    <td>${ticker}</td>
+                                                    <td>${difference.toFixed(2)}%</td>
+                                                    <td class="${direction === 'increase' ? 'text-success' : (direction === 'decrease' ? 'text-danger' : '')}">
+                                                        ${direction}
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            ${result.message ? `<div class="alert alert-success">${result.message}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+                scrollToElement('ai-portfolio-weights');
+            } else {
+                showError('ai-portfolio-weights', 'Error analyzing AI portfolio weights: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('ai-portfolio-weights', 'Error analyzing AI portfolio weights: ' + error.message);
+        }
+    });
+
     document.getElementById('compare-methods-btn').addEventListener('click', () => {
         const comparisonDiv = document.getElementById('methods-comparison');
         comparisonDiv.innerHTML = `

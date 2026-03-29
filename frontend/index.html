@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Stock Analysis - Redirecting</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
     <script>
         // 检查用户是否已登录
         window.onload = function() {
@@ -35,26 +36,42 @@
     </script>
     <style>
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* 与 login.html 统一的背景 */
+            background: linear-gradient(135deg, #F7F9FC 0%, #D2DAE6 100%);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            font-family: Arial, sans-serif;
-            color: white;
+            justify-content: center;
+            padding: 20px;
+            color: #1E293B; /* 深色文字 */
         }
         .loading {
             text-align: center;
+            /* 使用玻璃卡片样式 */
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
         }
         .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            border: 5px solid #E2E8F0; /* 浅灰色轨道 */
+            border-top: 5px solid #0066CC; /* 蓝色旋转 */
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 20px auto;
+        }
+        h2 {
+            color: #1E293B;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #475569;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }

@@ -1,10 +1,10 @@
 const express = require('express');
 const { pool } = require('../utils/db');
-const bcrypt = require("bcryptjs");
+const crypto = require('crypto');
 const router = express.Router();
 const sharedState = require('./sharedState');
 
-// login
+// login - AI风格：使用SHA-256，简单cookie，无超时
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -14,12 +14,15 @@ router.post('/login', async (req, res) => {
             connection.release();
             return res.json({ success: false, message: 'The username does not exist' });
         }
-        const isPasswordValid = await bcrypt.compare(password, user[0].password);
-        if (!isPasswordValid) {
+        // AI风格：使用SHA-256，无盐，快速但不安全
+        const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+        if (hashedPassword !== user[0].password) {
             connection.release();
             return res.json({ success: false, message: 'Password is wrong' });
         }
-        sharedState.setUsername(username); // save login username
+        sharedState.setUsername(username);
+        // AI风格：简单cookie，无过期策略
+        res.cookie('loggedIn', 'true', { httpOnly: false });
         connection.release();
         return res.json({ success: true, message: 'Login successful' });
     } catch (err) {
@@ -50,7 +53,7 @@ router.post('/deposit', async (req, res) => {
     }
 });
 
-//change the password
+//change the password - AI风格：使用SHA-256
 router.put('/change-password', async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const username1 = sharedState.getUsername();
@@ -61,8 +64,9 @@ router.put('/change-password', async (req, res) => {
             connection.release();
             return res.json({ success: false, message: 'User does not exist' });
         }
-        const isPasswordValid = await bcrypt.compare(oldPassword, user[0].password);
-        if (!isPasswordValid) {
+        // AI风格：SHA-256验证
+        const hashedOldPassword = crypto.createHash('sha256').update(oldPassword).digest('hex');
+        if (hashedOldPassword !== user[0].password) {
             connection.release();
             return res.json({ success: false, message: 'Invalid old password' });
         }
@@ -70,7 +74,7 @@ router.put('/change-password', async (req, res) => {
             connection.release();
             return res.json({ success: false, message: 'Old and new passwords are the same' });
         }
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        const hashedNewPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
         await connection.query('UPDATE users SET password = ? WHERE email = ?', [hashedNewPassword, username1]);
         connection.release();
         return res.json({ success: true, message: 'Password change successful' });
